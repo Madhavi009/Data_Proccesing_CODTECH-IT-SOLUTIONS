@@ -1,0 +1,46 @@
+DATA PROCESSING
+
+before applying AI algorithms, data often needs to be preprocessed to
+ensure its quality and suitability for analysis. This task involves cleaning,
+transforming, and preparing raw data for AI model training.
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+
+# Sample DataFrame creation (replace this with your dataset)
+data = {
+    'age': [25, 30, 35, np.nan, 45, 50, 55, 60, 65, 70],
+    'salary': [50000, 54000, 58000, 62000, 66000, np.nan, 74000, 78000, 82000, 86000],
+    'department': ['sales', 'engineering', 'engineering', 'sales', np.nan, 'engineering', 'hr', 'hr', 'sales', 'sales']
+}
+df = pd.DataFrame(data)
+
+# Handle missing values
+imputer = SimpleImputer(strategy='mean')
+df['age'] = imputer.fit_transform(df[['age']])
+df['salary'] = imputer.fit_transform(df[['salary']])
+df['department'].fillna(df['department'].mode()[0], inplace=True)
+
+# Encoding categorical variables
+df = pd.get_dummies(df, columns=['department'], drop_first=True)
+
+# Splitting data into features and target variable
+X = df.drop('salary', axis=1)
+y = df['salary']
+
+# Splitting the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Feature Scaling
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Output
+print("\nTraining Features Before Scaling:\n", X_train)
+print("\nTraining Features After Scaling:\n", X_train_scaled)
+print("\nTesting Features Before Scaling:\n", X_test)
+print("\nTesting Features After Scaling:\n", X_test_scaled)
